@@ -31,5 +31,25 @@
             return BinarySearch<T>(array, item, 0, array.Count);
         }
         #endregion
+
+        #region Linear search
+        public static int LinearSearch<T>(IList<T> arr, T item, int start, int end) where T : IComparable<T>
+        {
+            if (start > end) return -1;
+
+            for (; start <= end; start++)
+            {
+                if (item.CompareTo(arr[start]) == 0)
+                    return start;
+            }
+
+            return -1;
+        }
+
+        public static int LinearSearch<T>(IList<T> arr, T item) where T : IComparable<T>
+        {
+            return LinearSearch(arr, item, 0, arr.Count - 1);
+        }
+        #endregion
     }
 }
