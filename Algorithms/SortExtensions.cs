@@ -2,10 +2,28 @@
 {
     public static class SortExtensions
     {
+        #region Validation
+        private static void ValidArray<T>(IList<T> arr, int start, int end)
+        {
+            if (arr == null)
+                throw new ArgumentNullException(nameof(arr));
+
+            if (start > arr.Count || start < 0)
+                throw new ArgumentOutOfRangeException(nameof(start), "The value must be within the array boundaries");
+
+            if (end > arr.Count || end < 0)
+                throw new ArgumentOutOfRangeException(nameof(end), "The value must be within the array boundaries");
+
+            if (start > end)
+                throw new ArgumentException($"{nameof(start)} should be less or equal than {nameof(end)}");
+        }
+        #endregion
+
         #region Bubble sort
         public static void BubbleSort<T>(this IList<T> arr, int start, int end) where T : IComparable<T>
         {
-            if (start >= end) return;
+            ValidArray(arr, start, end);
+            if (start == end) return;
 
             for (int i = start; i < end; i++)
             {
@@ -46,7 +64,8 @@
 
         public static void QuickSort<T>(this IList<T> arr, int start, int end) where T : IComparable<T>
         {
-            if (start >= end) return;
+            ValidArray(arr, start, end);
+            if (start == end) return;
 
             int pivot = Partinition(arr, start, end);
             arr.QuickSort(start, pivot - 1);
@@ -83,6 +102,9 @@
 
         public static void PancakeSort<T>(this IList<T> arr, int start, int end) where T : IComparable<T>
         {
+            ValidArray(arr, start, end);
+            if (start == end) return;
+
             for (var unsorted = end; unsorted >= start; unsorted--)
             {
                 var max = IndexOfMax(arr, 0, unsorted);
@@ -104,6 +126,9 @@
         #region Shake sort
         public static void ShakeSort<T>(this IList<T> arr, int start, int end) where T : IComparable<T>
         {
+            ValidArray(arr, start, end);
+            if (start == end) return;
+
             for (int i = start; i < (end - start) / 2; i++)
             {
                 bool isSwapped = false;
@@ -161,6 +186,9 @@
 
         public static void BogoSort<T>(this IList<T> arr, int start, int end) where T : IComparable<T>
         {
+            ValidArray(arr, start, end);
+            if (start == end) return;
+
             while (IsSorted(arr, start, end))
             {
                 Permutation(arr, start, end);
@@ -170,6 +198,61 @@
         public static void BogoSort<T>(this IList<T> arr) where T : IComparable<T>
         {
             arr.BogoSort(0, arr.Count - 1);
+        }
+        #endregion
+
+        #region Insertion sort
+        public static void InsertionSort<T>(this IList<T> arr, int start, int end) where T : IComparable<T>
+        {
+            ValidArray(arr, start, end);
+            if (start == end) return;
+
+            for (int i = start + 1; i <= end; i++)
+            {
+                int j = i;
+                while (j > start && arr[j - 1].CompareTo(arr[j]) > 0)
+                {
+                    (arr[j - 1], arr[j]) = (arr[j], arr[j - 1]);
+                    j--;
+                }
+            }
+        }
+
+        public static void InsertionSort<T>(this IList<T> arr) where T : IComparable<T>
+        {
+            arr.InsertionSort(0, arr.Count - 1);
+        }
+        #endregion
+
+        #region Selection sort
+        private static int IndexOfMin<T>(IList<T> arr, int start, int end) where T : IComparable<T>
+        {
+            int res = start++;
+
+            for (; start <= end; start++)
+            {
+                if (arr[start].CompareTo(arr[res]) < 0)
+                    res = start;
+            }
+
+            return res;
+        }
+
+        private static void SelectionSort<T>(this IList<T> arr, int start, int end) where T : IComparable<T>
+        {
+            ValidArray(arr, start, end);
+            if (start == end) return;
+
+            for (int i = start; i <= end; i++)
+            {
+                int min = IndexOfMin(arr, i, end);
+                (arr[i], arr[min]) = (arr[min], arr[i]);
+            }
+        }
+
+        private static void SelectionSort<T>(this IList<T> arr) where T : IComparable<T>
+        {
+            arr.SelectionSort(0, arr.Count - 1);
         }
         #endregion
     }
